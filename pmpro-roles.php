@@ -21,7 +21,11 @@ class PMPRO_Roles {
 	function __construct(){
 		add_action( 'pmpro_save_membership_level', array( $this, 'edit_level' ) );
 		add_action( 'pmpro_delete_membership_level', array( $this, 'delete_level' ) );
+
+		//If version is before 2.5.8 use this - just commenting this out for now
 		add_action( 'pmpro_after_change_membership_level', array($this, 'user_change_level' ), 10, 2 );
+		//Only available in PMPro >= 2.5.8 
+		add_action( 'pmpro_after_all_membership_level_changes', array( $this, 'after_all_level_changes' ), 10, 1 );
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_admin_scripts' ) );
 		add_action( 'wp_ajax_' . PMPRO_Roles::$ajaction, array( $this, 'install' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( 'PMPRO_Roles', 'add_action_links' ) );
@@ -207,6 +211,49 @@ class PMPRO_Roles {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Change user role based on level change after all membership changes. Requires
+	 * PMPro version >= 2.5.8
+	 * @since 1.3.3
+	 */
+	function after_all_level_changes( $old_levels ){
+		
+		if( !empty( $old_levels ) ){
+
+			foreach( $old_levels as $uid => $levels ){
+
+				$wp_user_object = new WP_User($uid);
+				//ignore admins
+				if( in_array( 'administrator', $wp_user_object->roles ) )
+					return;
+
+				foreach( $levels as $level ){
+
+					$level_id = $level->id;
+
+					//We're only going to add the old roles if its not a cancellation
+					if( empty( $_REQUEST['levelstocancel'] ) && $level_id !== 0 ){
+
+						$roles = get_option( 'pmpro_roles_'.$level_id );
+						
+						if( is_array( $roles ) && ! empty( $roles ) ){
+							foreach( $roles as $role_key => $role_name ){
+								$wp_user_object->add_role( $role_key );
+							}
+						} else {
+							$wp_user_object->add_role( PMPRO_Roles::$role_key . $level_id ); //was set_role but we still want to add to existing roles
+						}
+					
+					}
+
+
+				}
+
+			}
+		}
+		
 	}
 
 	/**
