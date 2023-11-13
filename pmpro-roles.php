@@ -140,7 +140,7 @@ class PMPRO_Roles {
 			}
 
 			//created a new level
-			if( $_REQUEST['edit'] < 0 ) {
+			if ( ! empty( $_REQUEST['edit'] ) && $_REQUEST['edit'] < 0 ) {
 				foreach( $level_roles as $role_key => $role_name ){
 					if( $role_key === 'pmpro_draft_role' ){						
 						add_role( PMPRO_Roles::$role_key.$saveid, sanitize_text_field( $_REQUEST['name'] ), array( 'read' => true ) );	
