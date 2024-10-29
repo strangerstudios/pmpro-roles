@@ -5,11 +5,13 @@
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-roles/
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
- * Version: 1.4.2
- * License: GPL2
+ * Version: 1.5
+ * License: GPLv2 or later
  * Text Domain: pmpro-roles
  * Domain Path: /languages
  */
+
+define( 'PMPRO_ROLES_VERSION', '1.5' );
 
 class PMPRO_Roles {
 
@@ -71,20 +73,20 @@ class PMPRO_Roles {
 	 * Javascript for admin area.
 	 */
 	function enqueue_admin_scripts($hook) {
-		if( 'toplevel_page_pmpro-membershiplevels' != $hook ) {
+		if ( 'toplevel_page_pmpro-membershiplevels' != $hook ) {
 			return;
 		}
 
-		wp_enqueue_script( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.js' );
-		wp_enqueue_style( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.css' );
+		wp_enqueue_script( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.js', array( 'jquery' ), PMPRO_ROLES_VERSION );
+		wp_enqueue_style( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.css', array(), PMPRO_ROLES_VERSION );
 		$nonce = wp_create_nonce( PMPRO_Roles::$ajaction );
 		$vars = array(
-			'desc' => esc_html__('Levels not matching up, or missing?', PMPRO_Roles::$plugin_slug ),
-			'repair' => esc_html__('Repair', PMPRO_Roles::$plugin_slug ),
-			'working' => esc_html__('Working...', PMPRO_Roles::$plugin_slug ),
-			'done' => esc_html__('Done!', PMPRO_Roles::$plugin_slug ),
-			'fixed' => esc_html__( 'role connections were needed/repaired.', PMPRO_Roles::$plugin_slug ),
-			'failed' => esc_html__( 'An error occurred while repairing roles.', PMPRO_Roles::$plugin_slug ),
+			'desc' => esc_html__( 'Levels not matching up, or missing?', 'pmpro-roles' ),
+			'repair' => esc_html__( 'Repair', 'pmpro-roles' ),
+			'working' => esc_html__(' Working...', 'pmpro-roles' ),
+			'done' => esc_html__( 'Done!', 'pmpro-roles' ),
+			'fixed' => esc_html__( 'role connections were needed/repaired.', 'pmpro-roles' ),
+			'failed' => esc_html__( 'An error occurred while repairing roles.', 'pmpro-roles' ),
 			'ajaction' => PMPRO_Roles::$ajaction,
 			'nonce' => $nonce,
 			);
@@ -124,12 +126,14 @@ class PMPRO_Roles {
 	
 	/**
 	 * Settings for the edit level admin screen. Creates and saves role selection per level.
+	 * SECURITY: Nonce checks are run in paid-memberships-pro/adminpages/membershiplevels.php which once passed and OK, run the pmpro_save_membership_level hook.
 	 * @since 1.3
 	 */
 	function edit_level( $saveid ) {
 		//by being here, we know we already have the $_REQUEST we need, so no need to check.
 		$capabilities = self::capabilities( self::$role_key . $saveid ) ?: array( 'read' => true );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['pmpro_roles_level_present'] ) ) {
 
 			if ( ! empty( $_REQUEST['pmpro_roles_level'] ) ) {
@@ -365,7 +369,9 @@ class PMPRO_Roles {
 						'title' => array(),
 					),
 				);
-				echo sprintf( wp_kses( __( 'Choose one or more roles to be assigned for members of this level. <a href="%s" title="Paid Memberships Pro - Roles Add On" target="_blank">Visit the documentation page</a> for more information.', 'pmpro-roles' ), $allowed_pmpro_roles_description_html ), 'https://www.paidmembershipspro.com/add-ons/pmpro-roles//?utm_source=plugin&utm_medium=pmpro-membershiplevels&utm_campaign=add-ons&utm_content=pmpro-roles' );				
+
+				// translators: %s is a link to the download page for the Roles Add On.
+				echo sprintf( wp_kses( __( 'Choose one or more roles to be assigned for members of this level. <a href="%s" title="Paid Memberships Pro - Roles Add On" target="_blank">Visit the documentation page</a> for more information.', 'pmpro-roles' ), $allowed_pmpro_roles_description_html ), 'https://www.paidmembershipspro.com/add-ons/pmpro-roles/?utm_source=plugin&utm_medium=pmpro-membershiplevels&utm_campaign=add-ons&utm_content=pmpro-roles' );				
 				echo '<p>' . esc_html__( 'If you do not select a custom role for users of this membership level, the user will be assigned the "New User Default Role" as defined under Settings > General in the WordPress admin', 'pmpro-roles' ) . '</p>';
 			?>
 		</p>
@@ -407,7 +413,7 @@ class PMPRO_Roles {
 										<div class="pmpro_clickable" style="border-bottom-width: 4px;">
 											<input type='checkbox' name='pmpro_roles_level[pmpro_draft_role]' value='pmpro_draft_role' id='pmpro_draft_role' />
 											<label for='pmpro_draft_role'>
-												<em><?php _e('Create a new custom role for this membership level', 'pmpro-roles'); ?></em>
+												<em><?php esc_html_e( 'Create a new custom role for this membership level', 'pmpro-roles' ); ?></em>
 											</label>
 										</div>
 										<?php
@@ -426,7 +432,7 @@ class PMPRO_Roles {
 											<input type='checkbox' name='pmpro_roles_level[<?php echo esc_attr( $custom_pmpro_role ); ?>]' value='<?php echo esc_attr( $editable_roles[$custom_pmpro_role]["name"] ); ?>' id='<?php echo esc_attr( $custom_pmpro_role ); ?>' <?php echo esc_attr( $checked ); ?> />
 											<label for='<?php echo esc_attr( $custom_pmpro_role ); ?>'>
 												<?php echo esc_html( $editable_roles[$custom_pmpro_role]['name'] ); ?>
-												<?php printf( "<code>" . esc_html( 'pmpro_role_%s', 'pmpro-roles' ) . "</code>", $level_id ); ?>
+												<?php printf( "<code>" . esc_html( 'pmpro_role_%s' ) . "</code>", $level_id ); ?>
 											</label>
 										</div>
 										<?php
@@ -533,7 +539,7 @@ class PMPRO_Roles {
 
 	/**
 	 * Add content to the "Role" column in the Members List table.
-	 * @since TBD
+	 * @since 1.4
 	 * @param string $column_name The name of the column.
 	 * @param int $user_id The ID of the user.
 	 * @return void
@@ -558,14 +564,17 @@ class PMPRO_Roles {
 	 * @since 1.0
 	 */
 	public static function install() {
-		
-		global $wpdb;
-		if( defined( 'DOING_AJAX' ) && DOING_AJAX ){
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ){
 			check_ajax_referer( PMPRO_Roles::$ajaction );
 		}
 		
-		$levels = $wpdb->get_results( "SELECT * FROM $wpdb->pmpro_membership_levels" );
-		
+		// Only run this code if PMPro is active.
+		if ( function_exists( 'pmpro_getAllLevels' ) ) {
+			$levels = pmpro_getAllLevels( true, false );
+		} else {
+			$levels = false;
+		}
+
 		if( !$levels ) {
 			if( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				die( 'failed' );
@@ -588,10 +597,10 @@ class PMPRO_Roles {
 		}
 		if( defined( 'DOING_AJAX' ) && DOING_AJAX ){
 			if($i > 0){
-				echo $i;
+				echo (int) $i;
 			}
 			else{
-				echo __('No', PMPRO_Roles::$plugin_slug);
+				echo esc_html__('No', 'pmpro-roles');
 			}
 			die();
 		}
