@@ -1,24 +1,26 @@
-# Copyright (C) 2021 Paid Memberships Pro
-# This file is distributed under the GPL2.
+# Copyright (C) 2024 Paid Memberships Pro
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Roles Add On 1.4\n"
+"Project-Id-Version: Paid Memberships Pro - Roles Add On 1.5\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-08-18T14:26:14+00:00\n"
+"POT-Creation-Date: 2024-10-29T08:59:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: pmpro-roles\n"
 
 #: pmpro-roles.php:55
+#: pmpro-roles.php:84
 msgid "Levels not matching up, or missing?"
 msgstr ""
 
 #: pmpro-roles.php:56
+#: pmpro-roles.php:85
 msgid "Repair"
 msgstr ""
 
@@ -27,14 +29,17 @@ msgid "Working..."
 msgstr ""
 
 #: pmpro-roles.php:58
+#: pmpro-roles.php:87
 msgid "Done!"
 msgstr ""
 
 #: pmpro-roles.php:59
+#: pmpro-roles.php:88
 msgid "role connections were needed/repaired."
 msgstr ""
 
 #: pmpro-roles.php:60
+#: pmpro-roles.php:89
 msgid "An error occurred while repairing roles."
 msgstr ""
 
@@ -51,76 +56,106 @@ msgid "Select Roles For This Level"
 msgstr ""
 
 #: pmpro-roles.php:352
+#: pmpro-roles.php:602
 msgid "No"
 msgstr ""
 
 #: pmpro-roles.php:399
 #: pmpro-roles.php:538
+#: pmpro-roles.php:649
 msgid "Delete Roles and Deactivate"
 msgstr ""
 
 #: pmpro-roles.php:413
 #: pmpro-roles.php:552
+#: pmpro-roles.php:663
 msgid "Docs"
 msgstr ""
 
 #: pmpro-roles.php:413
 #: pmpro-roles.php:552
+#: pmpro-roles.php:663
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-roles.php:414
 #: pmpro-roles.php:553
+#: pmpro-roles.php:664
 msgid "Support"
 msgstr ""
 
 #: pmpro-roles.php:414
 #: pmpro-roles.php:553
+#: pmpro-roles.php:664
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-roles.php:462
 #: pmpro-roles.php:601
+#: pmpro-roles.php:715
 msgid "Dismiss this notice."
 msgstr ""
 
 #: pmpro-roles.php:462
 #: pmpro-roles.php:601
+#: pmpro-roles.php:715
 msgid "Plugin deactivated"
 msgstr ""
 
 #. Plugin Name of the plugin
+#: pmpro-roles.php
 msgid "Paid Memberships Pro - Roles Add On"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: pmpro-roles.php
 msgid "https://www.paidmembershipspro.com/add-ons/pmpro-roles/"
 msgstr ""
 
 #. Description of the plugin
+#: pmpro-roles.php
 msgid "Adds a WordPress Role for each Membership Level."
 msgstr ""
 
 #. Author of the plugin
+#: pmpro-roles.php
 msgid "Paid Memberships Pro"
 msgstr ""
 
 #. Author URI of the plugin
+#: pmpro-roles.php
 msgid "https://www.paidmembershipspro.com"
 msgstr ""
 
 #: pmpro-roles.php:299
+#: pmpro-roles.php:361
 msgid "Role Settings"
 msgstr ""
 
+#. translators: %s is a link to the download page for the Roles Add On.
 #: pmpro-roles.php:309
+#: pmpro-roles.php:373
 msgid "Choose one or more roles to be assigned for members of this level. <a href=\"%s\" title=\"Paid Memberships Pro - Roles Add On\" target=\"_blank\">Visit the documentation page</a> for more information."
 msgstr ""
 
 #: pmpro-roles.php:331
+#: pmpro-roles.php:396
 msgid "Roles"
 msgstr ""
 
 #: pmpro-roles.php:341
+#: pmpro-roles.php:415
 msgid "Create a new custom role for this membership level"
+msgstr ""
+
+#: pmpro-roles.php:86
+msgid " Working..."
+msgstr ""
+
+#: pmpro-roles.php:374
+msgid "If you do not select a custom role for users of this membership level, the user will be assigned the \"New User Default Role\" as defined under Settings > General in the WordPress admin"
+msgstr ""
+
+#: pmpro-roles.php:535
+msgid "Role"
 msgstr ""
