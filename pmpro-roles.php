@@ -130,6 +130,8 @@ class PMPRO_Roles {
 	 * @since 1.3
 	 */
 	function edit_level( $saveid ) {
+		global $wpdb;
+
 		//by being here, we know we already have the $_REQUEST we need, so no need to check.
 		$capabilities = self::capabilities( self::$role_key . $saveid ) ?: array( 'read' => true );
 
@@ -147,7 +149,11 @@ class PMPRO_Roles {
 
 			// We detect that the draft_role has been selected, so lets try to create it. (This can now happen whenever the role doesn't exist not just on new level creation)
 			if ( ! empty( $level_roles['pmpro_draft_role'] ) ) {
-				add_role( PMPRO_Roles::$role_key.$saveid, sanitize_text_field( $_REQUEST['name'] ), $capabilities );	
+				unset( $level_roles['pmpro_draft_role'] ); // Remove it from the array.
+				$role_name = sanitize_text_field( $_REQUEST['name'] );
+				add_role( PMPRO_Roles::$role_key.$saveid, $role_name, $capabilities );
+				$level_roles[PMPRO_Roles::$role_key.$saveid] = $role_name; // Got to add the newly created role to the level_roles array.
+				remove_role( 'pmpro_draft_role' ); // Delete the role entirely in case it exists, we no longer need it at this point forward.
 			}
 
 			if ( isset( $_REQUEST['edit'] ) && $_REQUEST['edit'] < 0 ) {
@@ -158,8 +164,6 @@ class PMPRO_Roles {
 					}
 				}
 			} else {
-
-				global $wpdb;
 				//have to get all roles and find ours because get_role() doesn't yield the role's "pretty" name, only its index.
 				$roles = get_option( $wpdb->get_blog_prefix() . 'user_roles' );
 
@@ -178,11 +182,6 @@ class PMPRO_Roles {
 					}
 					
 				}
-			}
-
-			if( !empty( $level_roles['pmpro_draft_role'] ) ){
-				unset( $level_roles['pmpro_draft_role'] );
-				$level_roles[PMPRO_Roles::$role_key.$saveid] = sanitize_text_field( $_REQUEST['name'] );
 			}
 
 			update_option( 'pmpro_roles_'.$saveid, $level_roles );
