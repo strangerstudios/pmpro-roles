@@ -1,7 +1,6 @@
 ![](roles-for-membership-levels.jpg)
 
 # [Roles for Membership Levels](https://www.paidmembershipspro.com/add-ons/pmpro-roles/) #
-[comment]: # (Generate badges from shields.io, only works for .org plugins to get other stats etc. We'd have to create our own endpoints for Premium plugins)
 
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg?style=flat-square)
 
@@ -21,7 +20,7 @@ For detailed installation steps, visit the [documentation](https://www.paidmembe
 If you find an issue/bug, let us know by [creating a detailed GitHub issue](https://github.com/strangerstudios/pmpro-roles/issues/new).
 
 ## Support ##
-This is a developer's portal for Roles for Membership Levels. We do not offer support on this channel. **Any support related questions should be directed to [paidmembershipspro.com/add-ons/pmpro-roles/](https://www.paidmembershipspro.com/add-ons/pmpro-roles/).**
+This is a developer's portal for Roles for Membership Levels. We do not offer support on this channel. **Any support related questions should be directed to [paidmembershipspro.com/support](https://www.paidmembershipspro.com/support/).**
 
 ## Contributing to Roles for Membership Levels ##
 We encourage and welcome any contribution to Roles for Membership Levels. Please read the [guidelines for contributing](https://github.com/strangerstudios/pmpro-roles/blob/dev/.github/CONTRIBUTING.md) to this repository.
@@ -35,3 +34,4 @@ Here are some ways for **non-developers to contribute** to Roles for Membership 
 
 1. Translate Roles for Membership Levels into your own [language](https://www.paidmembershipspro.com/paid-memberships-pro-in-your-language/).
 2. [Purchase a plus membership](https://paidmembershipspro.com/pricing) to help fund ongoing development and bug fixes.
+3. Leave an honest review for [Roles for Membership Levels](https://www.paidmembershipspro.com/submit-testimonial/)
