@@ -564,7 +564,7 @@ class PMPRO_Roles {
 	 */
 	public static function install() {
 		// Bail if we're running AJAX on install but not for our own action.
-		if ( defined( 'DOING_AJAX') && DOING_AJAX && ( ! empty( $_POST['action'] ) && $_POST['action'] != PMPRO_Roles::$ajaction ) ) {
+		if ( defined( 'DOING_AJAX') && DOING_AJAX && ( ! empty( $_POST['action'] ) && sanitize_text_field( wp_unslash( $_POST['action'] ) ) !== PMPRO_Roles::$ajaction ) ) {
 			return;
 		}
 
