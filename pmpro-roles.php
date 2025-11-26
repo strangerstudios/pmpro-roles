@@ -52,10 +52,8 @@ class PMPRO_Roles {
 	 * @return void
 	 */
 	function wp_hooks() {
-		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_admin_scripts' ) );
 		add_action( 'init', array( $this, 'load_text_domain' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( 'PMPRO_Roles', 'add_action_links' ) );	
-		add_action( 'wp_ajax_' . PMPRO_Roles::$ajaction, array( $this, 'install' ) );
 		add_filter( 'plugin_row_meta', array( 'PMPRO_Roles', 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'editable_roles', array( 'PMPRO_Roles', 'remove_list_roles' ), 10, 1 );
 		add_action( 'admin_init', array( 'PMPRO_Roles', 'delete_and_deactivate' ) );
@@ -67,32 +65,6 @@ class PMPRO_Roles {
 	 */
 	function load_text_domain() {
 		load_plugin_textdomain( 'pmpro-roles', false, basename( dirname( __FILE__ ) ) . '/languages' ); 
-	}
-	
-	/**
-	 * Javascript for admin area.
-	 */
-	function enqueue_admin_scripts($hook) {
-		if ( 'toplevel_page_pmpro-membershiplevels' != $hook ) {
-			return;
-		}
-
-		wp_enqueue_script( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.js', array( 'jquery' ), PMPRO_ROLES_VERSION );
-		wp_enqueue_style( PMPRO_Roles::$plugin_prefix.'admin', plugin_dir_url( __FILE__ ) . '/admin.css', array(), PMPRO_ROLES_VERSION );
-		$nonce = wp_create_nonce( PMPRO_Roles::$ajaction );
-		$vars = array(
-			'desc' => esc_html__( 'Levels not matching up, or missing?', 'pmpro-roles' ),
-			'repair' => esc_html__( 'Repair', 'pmpro-roles' ),
-			'working' => esc_html__(' Working...', 'pmpro-roles' ),
-			'done' => esc_html__( 'Done!', 'pmpro-roles' ),
-			'fixed' => esc_html__( 'role connections were needed/repaired.', 'pmpro-roles' ),
-			'failed' => esc_html__( 'An error occurred while repairing roles.', 'pmpro-roles' ),
-			'ajaction' => PMPRO_Roles::$ajaction,
-			'nonce' => $nonce,
-			);
-		$key = PMPRO_Roles::$plugin_prefix.'vars';
-		wp_localize_script( PMPRO_Roles::$plugin_prefix . 'admin', 'key', array( 'key'=>$key ) );
-		wp_localize_script( PMPRO_Roles::$plugin_prefix . 'admin', $key, $vars );
 	}
 	
 	/**
@@ -562,11 +534,7 @@ class PMPRO_Roles {
 	 * Initial function to run on install. Create roles for each existing level.
 	 * @since 1.0
 	 */
-	public static function install() {
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ){
-			check_ajax_referer( PMPRO_Roles::$ajaction );
-		}
-		
+	public static function install() {		
 		// Only run this code if PMPro is active.
 		if ( function_exists( 'pmpro_getAllLevels' ) ) {
 			$levels = pmpro_getAllLevels( true, false );
@@ -574,34 +542,22 @@ class PMPRO_Roles {
 			$levels = false;
 		}
 
-		if( !$levels ) {
-			if( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				die( 'failed' );
-			}
-			else {
-				return;
-			}
+		// No levels, no roles to create.
+		if ( ! $levels ) {
+			return;
 		}
 
+		// Get all capabilities for the custom roles.
 		$capabilities = PMPRO_Roles::capabilities();
 
 		$i = 0;
 		foreach ( $levels as $level ) {
 			$role_key = PMPRO_Roles::$role_key . $level->id;
 			//the role doesn't exist for this level
-			if( !get_role( $role_key ) ) {
+			if ( ! get_role( $role_key ) ) {
 				$i++;
 				add_role( $role_key, $level->name, $capabilities[$level->id] );
 			}
-		}
-		if( defined( 'DOING_AJAX' ) && DOING_AJAX ){
-			if($i > 0){
-				echo (int) $i;
-			}
-			else{
-				echo esc_html__('No', 'pmpro-roles');
-			}
-			die();
 		}
 	}
 
@@ -716,7 +672,7 @@ class PMPRO_Roles {
 		</div>
 		<?php
 	}
-}
+} // End of class.
 register_activation_hook( __FILE__, array( 'PMPRO_Roles', 'install' ) );
 
 /**
