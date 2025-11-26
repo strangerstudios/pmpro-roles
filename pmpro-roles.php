@@ -563,7 +563,12 @@ class PMPRO_Roles {
 	 * @since 1.0
 	 */
 	public static function install() {
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ){
+		// Bail if we're running AJAX on install but not for our own action.
+		if ( defined( 'DOING_AJAX') && DOING_AJAX && $_POST['action'] != PMPRO_Roles::$ajaction ) {
+			return;
+		}
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			check_ajax_referer( PMPRO_Roles::$ajaction );
 		}
 		
