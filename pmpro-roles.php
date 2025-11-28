@@ -534,7 +534,7 @@ class PMPRO_Roles {
 	 * Initial function to run on install. Create roles for each existing level.
 	 * @since 1.0
 	 */
-	public static function install() {		
+	public static function install() {
 		// Only run this code if PMPro is active.
 		if ( function_exists( 'pmpro_getAllLevels' ) ) {
 			$levels = pmpro_getAllLevels( true, false );
@@ -550,12 +550,10 @@ class PMPRO_Roles {
 		// Get all capabilities for the custom roles.
 		$capabilities = PMPRO_Roles::capabilities();
 
-		$i = 0;
 		foreach ( $levels as $level ) {
 			$role_key = PMPRO_Roles::$role_key . $level->id;
 			//the role doesn't exist for this level
 			if ( ! get_role( $role_key ) ) {
-				$i++;
 				add_role( $role_key, $level->name, $capabilities[$level->id] );
 			}
 		}
