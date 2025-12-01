@@ -45,6 +45,9 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.5.1 - 2025-12-01 =
+* REFACTOR: Removed unused code to improve quality and resolve an issue of activating the plugin via the Memberships > Add Ons page. #53 (@andrewlimaza)
+
 = 1.5 - 2024-10-29 =
 * SECURITY: Improved security and escaping of strings.
 * ENHANCEMENT: Improved capability for Paid Memberships Pro V3.0+ logic.

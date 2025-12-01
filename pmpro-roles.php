@@ -5,13 +5,13 @@
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-roles/
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
- * Version: 1.5
+ * Version: 1.5.1
  * License: GPLv2 or later
  * Text Domain: pmpro-roles
  * Domain Path: /languages
  */
 
-define( 'PMPRO_ROLES_VERSION', '1.5' );
+define( 'PMPRO_ROLES_VERSION', '1.5.1' );
 
 class PMPRO_Roles {
 
