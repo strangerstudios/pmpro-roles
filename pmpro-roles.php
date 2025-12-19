@@ -237,6 +237,11 @@ class PMPRO_Roles {
 			// Remove duplicates in the array of old and new roles.
 			$old_roles = array_unique( $old_roles );		
 			$new_roles = array_unique( $new_roles );
+
+			// Don't assign new roles when membership is pending from using the Pay By Check add-on
+			if ( pmpropbc_isMemberPending( $user_id ) ) {
+				$new_roles = $old_roles;
+			}
 	
 			// Build a unique array of roles to add and remove from user.
 			$add_roles = $new_roles;
