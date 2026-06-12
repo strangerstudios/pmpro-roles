@@ -5,13 +5,13 @@
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-roles/
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
- * Version: 1.5.1
+ * Version: 1.5.2
  * License: GPLv2 or later
  * Text Domain: pmpro-roles
  * Domain Path: /languages
  */
 
-define( 'PMPRO_ROLES_VERSION', '1.5.1' );
+define( 'PMPRO_ROLES_VERSION', '1.5.2' );
 
 class PMPRO_Roles {
 
@@ -569,7 +569,7 @@ class PMPRO_Roles {
 
 	/**
 	 * Add a "Role" column to the Members List table.
-	 * @since TBD
+	 * @since 1.5.2
 	 * @param array $columns The columns in the members list table.
 	 * @return array The columns in the members list table, with the "Role" column added.
 	 */

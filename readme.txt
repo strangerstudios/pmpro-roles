@@ -2,8 +2,8 @@
 Contributors: strangerstudios, joshlevinson
 Tags: pmpro, paid memberships pro, membership, roles
 Requires at least: 5.2
-Tested up to: 6.6
-Stable tag: 1.5
+Tested up to: 7.0
+Stable tag: 1.5.2
 
 Adds a WordPress Role for each Membership Level.
 
@@ -45,6 +45,11 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 1.5.2 - 2026-06-12 =
+* SECURITY: Users now need the manage_options capability to view or modify the roles assigned to a membership level. Users who can edit levels without that capability now see a read-only list of the level's assigned roles. #54 (@dparker1005)
+* SECURITY: Submitted role mappings are now validated against the roles offered in the level settings UI so that a tampered request cannot assign hidden roles such as administrator or another level's role. #54 (@dparker1005)
+* BUG FIX: Deleting a membership level now removes that level's role from any users who still have it. #54 (@dparker1005)
+
 = 1.5.1 - 2025-12-01 =
 * REFACTOR: Removed unused code to improve quality and resolve an issue of activating the plugin via the Memberships > Add Ons page. #53 (@andrewlimaza)
 
