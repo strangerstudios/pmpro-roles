@@ -104,6 +104,14 @@ class PMPRO_Roles {
 	function edit_level( $saveid ) {
 		global $wpdb;
 
+		// SECURITY: Role mappings can grant elevated roles to members, so require manage_options
+		// to change them even if a lower capability is used to edit levels. Users without
+		// manage_options never see the role settings UI (see level_settings()), so bailing here
+		// also keeps their level saves from modifying the saved mapping.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		//by being here, we know we already have the $_REQUEST we need, so no need to check.
 		$capabilities = self::capabilities( self::$role_key . $saveid ) ?: array( 'read' => true );
 
@@ -126,6 +134,26 @@ class PMPRO_Roles {
 				add_role( PMPRO_Roles::$role_key.$saveid, $role_name, $capabilities );
 				$level_roles[PMPRO_Roles::$role_key.$saveid] = $role_name; // Got to add the newly created role to the level_roles array.
 				remove_role( 'pmpro_draft_role' ); // Delete the role entirely in case it exists, we no longer need it at this point forward.
+			}
+
+			// SECURITY: Drop any submitted roles that the settings UI does not offer, so a
+			// tampered request can't map hidden roles like administrator or other levels'
+			// PMPro roles to this level. remove_list_roles() can't strip these for us here
+			// because PMPro unsets $_REQUEST['edit'] before this hook fires.
+			global $wp_roles;
+			$editable_roles = apply_filters( 'editable_roles', $wp_roles->roles );
+			foreach ( $level_roles as $role_key => $role_name ) {
+				// This level's own role is always allowed, even before it is registered.
+				if ( $role_key === self::$role_key . $saveid ) {
+					continue;
+				}
+				if (
+					! isset( $editable_roles[ $role_key ] )
+					|| ( 'administrator' === $role_key && apply_filters( 'pmpro_roles_hide_admin_role', true, $saveid ) )
+					|| ( strpos( $role_key, self::$role_key ) === 0 && apply_filters( 'pmpro_roles_exclude_other_pmpro_roles', true, $saveid ) )
+				) {
+					unset( $level_roles[ $role_key ] );
+				}
 			}
 
 			if ( isset( $_REQUEST['edit'] ) && $_REQUEST['edit'] < 0 ) {
@@ -169,6 +197,20 @@ class PMPRO_Roles {
 	function delete_level( $delete_id ) {
 		$role_key = PMPRO_Roles::$role_key . $delete_id;
 		if( !empty( $role_key ) ){
+			// SECURITY: Strip the role from any users who still hold it before removing the
+			// role definition. remove_role() only deletes the definition and leaves the
+			// assignment in each user's capabilities, which would silently reactivate if a
+			// level (and therefore this same role key) is recreated later.
+			$users = get_users( array( 'role' => $role_key ) );
+			foreach ( $users as $user ) {
+				if ( count( $user->roles ) > 1 ) {
+					$user->remove_role( $role_key );
+				} else {
+					$default_role = apply_filters( 'pmpro_roles_downgraded_role', get_option( 'default_role' ) );
+					$user->set_role( $default_role );
+				}
+			}
+
 			remove_role( $role_key );
 		}
 
@@ -327,6 +369,34 @@ class PMPRO_Roles {
 	 * @since 1.3
 	 */
 	public static function level_settings() {
+		// SECURITY: Role mappings can grant elevated roles to members, so only users with
+		// manage_options may change them (see edit_level()). Other users who can edit levels
+		// get a read-only view with no form fields, so their level saves leave the saved
+		// mapping untouched.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$level_id = intval( filter_input( INPUT_GET, 'edit', FILTER_DEFAULT ) );
+			$saved_roles = $level_id > 0 ? self::get_roles_for_level( $level_id ) : array();
+
+			// If no roles are saved (including for new levels), the default role is used.
+			if ( empty( $saved_roles ) ) {
+				$default_role = get_option( 'default_role' );
+				$saved_roles = array( $default_role => ucfirst( $default_role ) );
+			}
+
+			// Prefer the current role names over the names stored with the level.
+			global $wp_roles;
+			$role_names = array();
+			foreach ( $saved_roles as $role_key => $role_name ) {
+				$role_names[] = isset( $wp_roles->roles[ $role_key ]['name'] ) ? translate_user_role( $wp_roles->roles[ $role_key ]['name'] ) : $role_name;
+			}
+			?>
+			<hr />
+			<h3><?php esc_html_e( 'Role Settings', 'pmpro-roles' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Members of this level are assigned the following roles. Only administrators can change role settings.', 'pmpro-roles' ); ?></p>
+			<p><?php echo esc_html( implode( ', ', $role_names ) ); ?></p>
+			<?php
+			return;
+		}
 		?>
 		<hr />
 
