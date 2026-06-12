@@ -136,6 +136,26 @@ class PMPRO_Roles {
 				remove_role( 'pmpro_draft_role' ); // Delete the role entirely in case it exists, we no longer need it at this point forward.
 			}
 
+			// SECURITY: Drop any submitted roles that the settings UI does not offer, so a
+			// tampered request can't map hidden roles like administrator or other levels'
+			// PMPro roles to this level. remove_list_roles() can't strip these for us here
+			// because PMPro unsets $_REQUEST['edit'] before this hook fires.
+			global $wp_roles;
+			$editable_roles = apply_filters( 'editable_roles', $wp_roles->roles );
+			foreach ( $level_roles as $role_key => $role_name ) {
+				// This level's own role is always allowed, even before it is registered.
+				if ( $role_key === self::$role_key . $saveid ) {
+					continue;
+				}
+				if (
+					! isset( $editable_roles[ $role_key ] )
+					|| ( 'administrator' === $role_key && apply_filters( 'pmpro_roles_hide_admin_role', true, $saveid ) )
+					|| ( strpos( $role_key, self::$role_key ) === 0 && apply_filters( 'pmpro_roles_exclude_other_pmpro_roles', true, $saveid ) )
+				) {
+					unset( $level_roles[ $role_key ] );
+				}
+			}
+
 			if ( isset( $_REQUEST['edit'] ) && $_REQUEST['edit'] < 0 ) {
 				foreach( $level_roles as $role_key => $role_name ){
 					if ( $role_key === 'pmpro_role_'. $saveid ) {
