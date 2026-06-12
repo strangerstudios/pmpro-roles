@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Paid Memberships Pro
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Roles Add On 1.5.1\n"
+"Project-Id-Version: Paid Memberships Pro - Roles Add On 1.5.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-12-01T08:54:37+00:00\n"
+"POT-Creation-Date: 2026-06-12T17:47:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-roles\n"
@@ -39,56 +39,61 @@ msgstr ""
 msgid "https://www.paidmembershipspro.com"
 msgstr ""
 
-#: pmpro-roles.php:333
+#: pmpro-roles.php:394
+#: pmpro-roles.php:403
 msgid "Role Settings"
 msgstr ""
 
+#: pmpro-roles.php:395
+msgid "Members of this level are assigned the following roles. Only administrators can change role settings."
+msgstr ""
+
 #. translators: %s is a link to the download page for the Roles Add On.
-#: pmpro-roles.php:345
+#: pmpro-roles.php:415
 #, php-format
 msgid "Choose one or more roles to be assigned for members of this level. <a href=\"%s\" title=\"Paid Memberships Pro - Roles Add On\" target=\"_blank\">Visit the documentation page</a> for more information."
 msgstr ""
 
-#: pmpro-roles.php:346
+#: pmpro-roles.php:416
 msgid "If you do not select a custom role for users of this membership level, the user will be assigned the \"New User Default Role\" as defined under Settings > General in the WordPress admin"
 msgstr ""
 
-#: pmpro-roles.php:368
+#: pmpro-roles.php:438
 msgid "Roles"
 msgstr ""
 
-#: pmpro-roles.php:387
+#: pmpro-roles.php:457
 msgid "Create a new custom role for this membership level"
 msgstr ""
 
-#: pmpro-roles.php:507
+#: pmpro-roles.php:577
 msgid "Role"
 msgstr ""
 
-#: pmpro-roles.php:603
+#: pmpro-roles.php:673
 msgid "Delete Roles and Deactivate"
 msgstr ""
 
-#: pmpro-roles.php:617
+#: pmpro-roles.php:687
 msgid "View Documentation"
 msgstr ""
 
-#: pmpro-roles.php:617
+#: pmpro-roles.php:687
 msgid "Docs"
 msgstr ""
 
-#: pmpro-roles.php:618
+#: pmpro-roles.php:688
 msgid "Visit Customer Support Forum"
 msgstr ""
 
-#: pmpro-roles.php:618
+#: pmpro-roles.php:688
 msgid "Support"
 msgstr ""
 
-#: pmpro-roles.php:669
+#: pmpro-roles.php:739
 msgid "Plugin deactivated"
 msgstr ""
 
-#: pmpro-roles.php:669
+#: pmpro-roles.php:739
 msgid "Dismiss this notice."
 msgstr ""
