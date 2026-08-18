@@ -667,8 +667,8 @@ class PMPRO_Roles {
 	 * @since 1.0
 	 */
 	public static function add_action_links($links) {	
-		// Only add this if plugin is active.
-		if( is_plugin_active( 'pmpro-roles/pmpro-roles.php' ) ) {
+		// Only add this if plugin is active and the user can run the action.
+		if( is_plugin_active( 'pmpro-roles/pmpro-roles.php' ) && current_user_can( 'manage_options' ) ) {
 			$new_links = array(
 				'<a href="' . wp_nonce_url(get_admin_url(NULL, 'plugins.php?pmpro_roles_delete_and_deactivate=1'), 'pmpro_roles_delete_and_deactivate') . '">' . esc_html__( 'Delete Roles and Deactivate', 'pmpro-roles' ) . '</a>',
 			);
