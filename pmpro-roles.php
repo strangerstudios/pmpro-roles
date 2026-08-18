@@ -700,6 +700,10 @@ class PMPRO_Roles {
 		if(empty($_REQUEST['pmpro_roles_delete_and_deactivate']))
 			return;
 
+		//check capability
+		if(!current_user_can('manage_options'))
+			return;
+
 		//check nonce
 		check_admin_referer('pmpro_roles_delete_and_deactivate');
 		
