@@ -11,6 +11,10 @@
  * Domain Path: /languages
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 define( 'PMPRO_ROLES_VERSION', '1.5.3' );
 
 class PMPRO_Roles {
@@ -115,11 +119,13 @@ class PMPRO_Roles {
 		//by being here, we know we already have the $_REQUEST we need, so no need to check.
 		$capabilities = self::capabilities( self::$role_key . $saveid ) ?: array( 'read' => true );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce is checked by PMPro before pmpro_save_membership_level fires.
 		if ( ! empty( $_REQUEST['pmpro_roles_level_present'] ) ) {
 
+			$level_name = isset( $_REQUEST['name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['name'] ) ) : '';
+
 			if ( ! empty( $_REQUEST['pmpro_roles_level'] ) ) {
-				$level_roles = $_REQUEST['pmpro_roles_level'];
+				$level_roles = array_map( 'sanitize_text_field', (array) wp_unslash( $_REQUEST['pmpro_roles_level'] ) );
 			} else {
 				// If no role chosen, use the default.
 				$level_roles = array();
@@ -130,7 +136,7 @@ class PMPRO_Roles {
 			// We detect that the draft_role has been selected, so lets try to create it. (This can now happen whenever the role doesn't exist not just on new level creation)
 			if ( ! empty( $level_roles['pmpro_draft_role'] ) ) {
 				unset( $level_roles['pmpro_draft_role'] ); // Remove it from the array.
-				$role_name = sanitize_text_field( $_REQUEST['name'] );
+				$role_name = $level_name;
 				add_role( PMPRO_Roles::$role_key.$saveid, $role_name, $capabilities );
 				$level_roles[PMPRO_Roles::$role_key.$saveid] = $role_name; // Got to add the newly created role to the level_roles array.
 				remove_role( 'pmpro_draft_role' ); // Delete the role entirely in case it exists, we no longer need it at this point forward.
@@ -173,12 +179,12 @@ class PMPRO_Roles {
 					
 					if( !isset( $roles[$role_key] ) ){
 						$capabilities = PMPRO_Roles::capabilities( $role_key );						
-						add_role( $role_key, sanitize_text_field( $_REQUEST['name'] ), $capabilities[$role_key] );
+						add_role( $role_key, $level_name, $capabilities[$role_key] );
 						return;
 					}
 
-					if( ( strpos( $role_key, PMPRO_Roles::$role_key ) !== FALSE ) && sanitize_text_field( $_REQUEST['name'] ) !== $role_name ) {	
-						PMPRO_Roles::update_role_name( $role_key, sanitize_text_field( $_REQUEST['name'] ) );
+					if( ( strpos( $role_key, PMPRO_Roles::$role_key ) !== FALSE ) && $level_name !== $role_name ) {	
+						PMPRO_Roles::update_role_name( $role_key, $level_name );
 					}
 					
 				}
@@ -187,7 +193,7 @@ class PMPRO_Roles {
 			update_option( 'pmpro_roles_'.$saveid, $level_roles );
 
 		}
-		
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 	
 	/**
@@ -321,8 +327,10 @@ class PMPRO_Roles {
 			return;
 
 		// Check if user is cancelling.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; the cancel request is verified by PMPro.
 		if( defined( 'PMPROMMPU_DIR' ) && !empty( $_REQUEST['levelstocancel'] ) ) { //Adds support for MMPU
-			$levels_to_cancel = explode( " ", $_REQUEST['levelstocancel'] );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- See above.
+			$levels_to_cancel = explode( " ", sanitize_text_field( wp_unslash( $_REQUEST['levelstocancel'] ) ) );
 			if( !empty( $levels_to_cancel ) ){
 				foreach( $levels_to_cancel as $ltc ){
 					$wp_user_object->remove_role( PMPRO_Roles::$role_key.intval( $ltc ) );		
@@ -450,7 +458,7 @@ class PMPRO_Roles {
 								<input type="hidden" name="pmpro_roles_level_present" value="1" />
 								<?php
 									//New level, choose if they want to create a role for this level
-									if ( !  $wp_roles->is_role( PMPRO_Roles::$role_key.$level_id ) || $_REQUEST['edit'] < 0 ) { ?>
+									if ( !  $wp_roles->is_role( PMPRO_Roles::$role_key.$level_id ) || intval( filter_input( INPUT_GET, 'edit', FILTER_DEFAULT ) ) < 0 ) { ?>
 										<div class="pmpro_clickable" style="border-bottom-width: 4px;">
 											<input type='checkbox' name='pmpro_roles_level[pmpro_draft_role]' value='pmpro_draft_role' id='pmpro_draft_role' />
 											<label for='pmpro_draft_role'>
@@ -473,7 +481,7 @@ class PMPRO_Roles {
 											<input type='checkbox' name='pmpro_roles_level[<?php echo esc_attr( $custom_pmpro_role ); ?>]' value='<?php echo esc_attr( $editable_roles[$custom_pmpro_role]["name"] ); ?>' id='<?php echo esc_attr( $custom_pmpro_role ); ?>' <?php echo esc_attr( $checked ); ?> />
 											<label for='<?php echo esc_attr( $custom_pmpro_role ); ?>'>
 												<?php echo esc_html( $editable_roles[$custom_pmpro_role]['name'] ); ?>
-												<?php printf( "<code>" . esc_html( 'pmpro_role_%s' ) . "</code>", $level_id ); ?>
+												<?php echo '<code>' . esc_html( $custom_pmpro_role ) . '</code>'; ?>
 											</label>
 										</div>
 										<?php
@@ -542,9 +550,10 @@ class PMPRO_Roles {
 			return $roles;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only use of the level being edited.
 		if( !empty( $_REQUEST['edit'] ) ){
 
-			$edit_level = intval( $_REQUEST['edit'] );
+			$edit_level = intval( $_REQUEST['edit'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			$all_levels = pmpro_getAllLevels( true, false );
 
